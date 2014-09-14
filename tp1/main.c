@@ -31,30 +31,30 @@ typedef struct SCola
 
 //firmas
 
-void crear(Pila* cola, int size);
-void liberar(Pila *cola);
+void crear(Pila* pila, int size);
+void liberar(Pila *pila);
 
-int estaVacia(Pila *cola);
-int estaLlena(Pila *cola);
-int limpiar(Pila *cola);
+int estaVacia(Pila *pila);
+int estaLlena(Pila *pila);
+int limpiar(Pila *pila);
 
-void insertar(Pila *cola, int numero, char *titulo); //push
-Tarea* tomar(Pila *cola);//pull
-Tarea* ver(Pila *cola);//peek 
+void insertar(Pila *pila, int numero, char *titulo); //push
+Tarea* tomar(Pila *pila);//pull
+Tarea* ver(Pila *pila);//peek 
 
 //funciones de menu:
 int preguntarCantidadDeTareas();
 int preguntarAccion();
 void mostrarMensajeDeOpctionInvalida();
-void obtenerTareaDesdeUsuario(Pila *cola);
-void mostrarActual(Pila *cola);
-void mostrarYDescargar(Pila *cola);
-void limpiarPila(Pila *cola);
+void obtenerTareaDesdeUsuario(Pila *pila);
+void mostrarActual(Pila *pila);
+void mostrarYDescargar(Pila *pila);
+void limpiarPila(Pila *pila);
 
 //codigo
 int main(int argc, char *argv[])
 {
-  Pila cola;
+  Pila pila;
   int size;
   int opcion;
   Tarea *tarea;
@@ -62,21 +62,21 @@ int main(int argc, char *argv[])
   size = preguntarCantidadDeTareas();
   
   // pedir tamaño por consola
-  crear(&cola, size);
+  crear(&pila, size);
   
   while( (opcion = preguntarAccion()) != SALIR ){
          switch(opcion) {
              case AGREGAR:
-                 obtenerTareaDesdeUsuario(&cola);
+                 obtenerTareaDesdeUsuario(&pila);
                  break; 
              case VER:
-                 mostrarActual(&cola);
+                 mostrarActual(&pila);
                  break; 
              case DESCARTAR:
-                 mostrarYDescargar(&cola);
+                 mostrarYDescargar(&pila);
                  break; 
              case LIMPIAR:
-                 limpiarPila(&cola);
+                 limpiarPila(&pila);
                  break;                  
              default : /* Optional */
                mostrarMensajeDeOpctionInvalida();             
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
   }
   
   
-  liberar(&cola);
+  liberar(&pila);
   
   system("PAUSE");	
    
@@ -120,17 +120,17 @@ void mostrarMensajeDeOpctionInvalida(){
     printf( "Opcion Invalida\n");
 }
  
-void obtenerTareaDesdeUsuario(Pila *cola){
+void obtenerTareaDesdeUsuario(Pila *pila){
      
   int numero;
   char titulo[100];
   
-   if(pilaLlena(cola) == false) {
+   if(pilaLlena(pila) == false) {
       
     printf( "\n\nIngrese tarea\n nr texto\n");
     scanf("%d %s", &numero, titulo);
     
-    insertar(cola, numero, titulo);
+    insertar(pila, numero, titulo);
       
   } else {
     printf( "\n\nYa no se pueden cargar mas tareas\n");
@@ -138,13 +138,13 @@ void obtenerTareaDesdeUsuario(Pila *cola){
   
 }
 
-void mostrarActual(Pila *cola) {
+void mostrarActual(Pila *pila) {
      
   Tarea *tarea;
   //test:
-  if(pilaVacia(cola) == false) {
+  if(pilaVacia(pila) == false) {
     printf( "\n\nTarea Actual:\n");
-    tarea = ver(cola); //no la saca
+    tarea = ver(pila); //no la saca
     printf( "- %d %s\n", tarea->numero, tarea->titulo);
     
   } else {
@@ -153,43 +153,43 @@ void mostrarActual(Pila *cola) {
   
 }
 
-void mostrarYDescargar(Pila *cola){
+void mostrarYDescargar(Pila *pila){
      
   Tarea *tarea;
   //test:
-  if(pilaVacia(cola) == false) {  
+  if(pilaVacia(pila) == false) {  
                      
     printf( "\n\nDescartando:\n");
-    mostrarActual(cola);
-    tarea = tomar(cola); //l saca
+    mostrarActual(pila);
+    tarea = tomar(pila); //l saca
   } else {
       printf( "\n\nSin tareas\n");
   }
 }
 
 //////////
-// functiones de cola
-void crear(Pila* cola, int size){
-     cola->actual = 0;
-     cola->cima = size;
+// functiones de pila
+void crear(Pila* pila, int size){
+     pila->actual = 0;
+     pila->cima = size;
      
-     cola->tareas = malloc(sizeof(Pila) * size);
+     pila->tareas = malloc(sizeof(Pila) * size);
 }
 
-void limpiarPila(Pila *cola) {
-    cola->actual = 0;
+void limpiarPila(Pila *pila) {
+    pila->actual = 0;
 }
 
-void liberar(Pila *cola) {
-     free( cola->tareas );
+void liberar(Pila *pila) {
+     free( pila->tareas );
 }
 
-void insertar(Pila *cola, int numero, char *titulo) {
+void insertar(Pila *pila, int numero, char *titulo) {
      
-     cola->actual++;
+     pila->actual++;
      
      //por q es 0-based
-     Tarea* tarea = &cola->tareas[cola->actual-1];
+     Tarea* tarea = &pila->tareas[pila->actual-1];
      
      tarea->numero = numero;
      
@@ -197,28 +197,28 @@ void insertar(Pila *cola, int numero, char *titulo) {
      
 }
 
-Tarea* tomar(Pila *cola){
+Tarea* tomar(Pila *pila){
        //ver si esta bien esto
-       Tarea *tarea = &cola->tareas[cola->actual-1];
+       Tarea *tarea = &pila->tareas[pila->actual-1];
        
-       cola->actual--;
+       pila->actual--;
        
        return tarea;
 }
 
-Tarea* ver(Pila *cola) {
-        return &cola->tareas[cola->actual-1];
+Tarea* ver(Pila *pila) {
+        return &pila->tareas[pila->actual-1];
 }
 
-int pilaVacia(Pila *cola) {
-    if(cola->actual > 0) {
+int pilaVacia(Pila *pila) {
+    if(pila->actual > 0) {
        return false;
      } 
      
      return true;
 }
-int pilaLlena(Pila *cola) {
-    if(cola->actual >= cola->cima) {
+int pilaLlena(Pila *pila) {
+    if(pila->actual >= pila->cima) {
        return true;
      } 
      
