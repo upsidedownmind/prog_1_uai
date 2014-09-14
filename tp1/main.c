@@ -30,10 +30,11 @@ typedef struct SCola
 
 //firmas
 
-int estaVacia(Cola *cola);
-
 void crear(Cola* cola, int size);
 void liberar(Cola *cola);
+
+int estaVacia(Cola *cola);
+int estaLlena(Cola *cola);
 
 void agregar(Cola *cola, int numero, char *titulo); //push
 Tarea* tomar(Cola *cola);//pull
@@ -88,19 +89,45 @@ int main(int argc, char *argv[])
 //////////
 // menus
 int preguntarCantidadDeTareas() {
-    return 10;//tomar del usuario
+    int size;
+    
+    printf( "Cuntas tareas (max)?\n-");
+    scanf("%d", &size);
+    
+    return size;
 }
 int preguntarAccion() {
-    //poner menu
-    return SALIR;
+    int accion;
+     
+    printf( "Seleccione un accion?\n");
+    printf( "- %d AGREGAR\n", AGREGAR);
+    printf( "- %d VER\n", VER);
+    printf( "- %d DESCARTAR\n", DESCARTAR);
+    printf( "- %d SALIR\n", SALIR); 
+    
+    scanf("%d", &accion);
+    
+    return accion;
 }
 void mostrarMensajeDeOpctionInvalida(){
-     //hacer
+    printf( "Opcion Invalida\n");
 }
  
 void obtenerTareaDesdeUsuario(Cola *cola){
-  //tomr datos de menu
-  agregar(cola, 123, "test");
+     
+  int numero;
+  char titulo[100];
+  
+   if(estaLlena(cola) == false) {
+      
+    printf( "Ingrese tarea\n nr texto\n");
+    scanf("%d %s", &numero, titulo);
+    
+    agregar(cola, numero, titulo);
+      
+  } else {
+    printf( "Ya no se pueden cargar mas tareas\n");
+  }
   
 }
 
@@ -109,10 +136,11 @@ void mostrarActual(Cola *cola) {
   Tarea *tarea;
   //test:
   if(estaVacia(cola) == false) {
-    tarea = ver(cola); //no9 l saca
-  
+    tarea = ver(cola); //no la saca
+    printf( "- %d %s\n", tarea->numero, tarea->titulo);
+    
   } else {
-         //mostrar error
+    printf( "Sin tareas\n");
   }
   
 }
@@ -122,9 +150,12 @@ void mostrarYDescargar(Cola *cola){
   Tarea *tarea;
   //test:
   if(estaVacia(cola) == false) {  
+                     
+    printf( "Descartando:\n");
+    mostrarActual(cola);
     tarea = tomar(cola); //l saca
   } else {
-         //mostrar error
+      printf( "Sin tareas\n");
   }
 }
 
@@ -142,10 +173,6 @@ void liberar(Cola *cola) {
 }
 
 void agregar(Cola *cola, int numero, char *titulo) {
-     
-     if(cola->actual >= cola->max) {
-       return;
-     } 
      
      cola->actual++;
      
@@ -177,4 +204,11 @@ int estaVacia(Cola *cola) {
      } 
      
      return true;
+}
+int estaLlena(Cola *cola) {
+    if(cola->actual >= cola->max) {
+       return true;
+     } 
+     
+     return false;
 }
