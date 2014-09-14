@@ -2,7 +2,7 @@
 // ARCHIVO   : PE_TP11_BERTINAT.c
 // AUTOR     : Affonso, Francisco
 //             Bertinat, Ezequiel
-// VERSIÓN   : 1.0 
+// VERSIÃ“N   : 1.0 
 // FECHA     : 29/06/2014.
 ////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
   
   size = preguntarCantidadDeTareas();
   
-  // pedir tamaño por consola
+  // pedir tamaÃ±o por consola
   crear(&pila, size);
   //Menu de la consola, cierre con 5 - SALIR
   while( (opcion = preguntarAccion()) != SALIR ){
@@ -223,7 +223,7 @@ void mostrarYDescargar(Pila *pila){
 // FUNCION   : void crear(Pila* pila, int size){
 // ACCION    : declaracion incial de la structura de pila
 // PARAMETROS: struct Pila -> Structura utilizada para laa funcion
-//             int size -> Tamaño de la pila
+//             int size -> TamaÃ±o de la pila
 // DEVUELVE  : NADA.
 //..............................................................................
 // NOTA: Crea la pila con parametros como datos inciales 
