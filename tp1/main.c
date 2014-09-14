@@ -9,7 +9,8 @@
 #define AGREGAR 1
 #define VER 2
 #define DESCARTAR 3
-#define SALIR 4
+#define LIMPIAR 4
+#define SALIR 5
 
 //tipos de datos
 typedef struct STarea
@@ -21,37 +22,39 @@ typedef struct STarea
 typedef struct SCola
 { 
   int actual;  
-  int max;
+  int cima;
   
   Tarea *tareas;
   
-} Cola;
+} Pila;
 
 
 //firmas
 
-void crear(Cola* cola, int size);
-void liberar(Cola *cola);
+void crear(Pila* cola, int size);
+void liberar(Pila *cola);
 
-int estaVacia(Cola *cola);
-int estaLlena(Cola *cola);
+int estaVacia(Pila *cola);
+int estaLlena(Pila *cola);
+int limpiar(Pila *cola);
 
-void agregar(Cola *cola, int numero, char *titulo); //push
-Tarea* tomar(Cola *cola);//pull
-Tarea* ver(Cola *cola);//peek
+void insertar(Pila *cola, int numero, char *titulo); //push
+Tarea* tomar(Pila *cola);//pull
+Tarea* ver(Pila *cola);//peek 
 
 //funciones de menu:
 int preguntarCantidadDeTareas();
 int preguntarAccion();
 void mostrarMensajeDeOpctionInvalida();
-void obtenerTareaDesdeUsuario(Cola *cola);
-void mostrarActual(Cola *cola);
-void mostrarYDescargar(Cola *cola);
+void obtenerTareaDesdeUsuario(Pila *cola);
+void mostrarActual(Pila *cola);
+void mostrarYDescargar(Pila *cola);
+void limpiarPila(Pila *cola);
 
 //codigo
 int main(int argc, char *argv[])
 {
-  Cola cola;
+  Pila cola;
   int size;
   int opcion;
   Tarea *tarea;
@@ -72,6 +75,9 @@ int main(int argc, char *argv[])
              case DESCARTAR:
                  mostrarYDescargar(&cola);
                  break; 
+             case LIMPIAR:
+                 limpiarPila(&cola);
+                 break;                  
              default : /* Optional */
                mostrarMensajeDeOpctionInvalida();             
          };
@@ -91,7 +97,7 @@ int main(int argc, char *argv[])
 int preguntarCantidadDeTareas() {
     int size;
     
-    printf( "Cuntas tareas (max)?\n-");
+    printf( "Cuntas tareas (cima)?\n-");
     scanf("%d", &size);
     
     return size;
@@ -99,10 +105,11 @@ int preguntarCantidadDeTareas() {
 int preguntarAccion() {
     int accion;
      
-    printf( "Seleccione un accion?\n");
+    printf( "\n\nSeleccione un accion?\n");
     printf( "- %d AGREGAR\n", AGREGAR);
     printf( "- %d VER\n", VER);
     printf( "- %d DESCARTAR\n", DESCARTAR);
+    printf( "- %d LIMPIAR\n\n", LIMPIAR); 
     printf( "- %d SALIR\n", SALIR); 
     
     scanf("%d", &accion);
@@ -113,66 +120,71 @@ void mostrarMensajeDeOpctionInvalida(){
     printf( "Opcion Invalida\n");
 }
  
-void obtenerTareaDesdeUsuario(Cola *cola){
+void obtenerTareaDesdeUsuario(Pila *cola){
      
   int numero;
   char titulo[100];
   
-   if(estaLlena(cola) == false) {
+   if(pilaLlena(cola) == false) {
       
-    printf( "Ingrese tarea\n nr texto\n");
+    printf( "\n\nIngrese tarea\n nr texto\n");
     scanf("%d %s", &numero, titulo);
     
-    agregar(cola, numero, titulo);
+    insertar(cola, numero, titulo);
       
   } else {
-    printf( "Ya no se pueden cargar mas tareas\n");
+    printf( "\n\nYa no se pueden cargar mas tareas\n");
   }
   
 }
 
-void mostrarActual(Cola *cola) {
+void mostrarActual(Pila *cola) {
      
   Tarea *tarea;
   //test:
-  if(estaVacia(cola) == false) {
+  if(pilaVacia(cola) == false) {
+    printf( "\n\nTarea Actual:\n");
     tarea = ver(cola); //no la saca
     printf( "- %d %s\n", tarea->numero, tarea->titulo);
     
   } else {
-    printf( "Sin tareas\n");
+    printf( "\n\nSin tareas\n");
   }
   
 }
 
-void mostrarYDescargar(Cola *cola){
+void mostrarYDescargar(Pila *cola){
      
   Tarea *tarea;
   //test:
-  if(estaVacia(cola) == false) {  
+  if(pilaVacia(cola) == false) {  
                      
-    printf( "Descartando:\n");
+    printf( "\n\nDescartando:\n");
     mostrarActual(cola);
     tarea = tomar(cola); //l saca
   } else {
-      printf( "Sin tareas\n");
+      printf( "\n\nSin tareas\n");
   }
 }
 
 //////////
 // functiones de cola
-void crear(Cola* cola, int size){
+void crear(Pila* cola, int size){
      cola->actual = 0;
-     cola->max = size;
+     cola->cima = size;
      
-     cola->tareas = malloc(sizeof(Cola) * size);
+     cola->tareas = malloc(sizeof(Pila) * size);
 }
 
-void liberar(Cola *cola) {
+void limpiarPila(Pila *cola) {
+    cola->actual = 0;
+}
+
+void liberar(Pila *cola) {
      free( cola->tareas );
 }
 
-void agregar(Cola *cola, int numero, char *titulo) {
+void insertar(Pila *cola, int numero, char *titulo) {
      
      cola->actual++;
      
@@ -185,7 +197,7 @@ void agregar(Cola *cola, int numero, char *titulo) {
      
 }
 
-Tarea* tomar(Cola *cola){
+Tarea* tomar(Pila *cola){
        //ver si esta bien esto
        Tarea *tarea = &cola->tareas[cola->actual-1];
        
@@ -194,19 +206,19 @@ Tarea* tomar(Cola *cola){
        return tarea;
 }
 
-Tarea* ver(Cola *cola) {
+Tarea* ver(Pila *cola) {
         return &cola->tareas[cola->actual-1];
 }
 
-int estaVacia(Cola *cola) {
+int pilaVacia(Pila *cola) {
     if(cola->actual > 0) {
        return false;
      } 
      
      return true;
 }
-int estaLlena(Cola *cola) {
-    if(cola->actual >= cola->max) {
+int pilaLlena(Pila *cola) {
+    if(cola->actual >= cola->cima) {
        return true;
      } 
      
