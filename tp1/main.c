@@ -26,7 +26,7 @@ typedef struct STarea
   char titulo[100];
 } Tarea;
 
-typedef struct SCola
+typedef struct SPila
 { 
   int actual;  
   int cima;
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 {
     ////DECLARACIONES DE VARIABLES
   Pila pila; //Estructura pila
-  int size; /
+  int size; 
   int opcion;
   Tarea *tarea;
   
