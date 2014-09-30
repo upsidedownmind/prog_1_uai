@@ -52,10 +52,13 @@ Tarea* ver(Pila *pila);//peek
 int preguntarCantidadDeTareas();
 int preguntarAccion();
 void mostrarMensajeDeOpctionInvalida();
-void obtenerTareaDesdeUsuario(Pila *pila);
+void obtenerTareaDesdeUsuario(Pila *pila, int *numero);
 void mostrarActual(Pila *pila);
 void mostrarYDescargar(Pila *pila);
 void limpiarPila(Pila *pila);
+
+// decorados
+void esperaTecla();
 
 //codigo
 int main(int argc, char *argv[])
@@ -65,6 +68,7 @@ int main(int argc, char *argv[])
   int size; 
   int opcion;
   Tarea *tarea;
+  int numeroDeTarea = 0;
   
   size = preguntarCantidadDeTareas();
   
@@ -74,7 +78,7 @@ int main(int argc, char *argv[])
   while( (opcion = preguntarAccion()) != SALIR ){
          switch(opcion) {
              case AGREGAR:
-                 obtenerTareaDesdeUsuario(&pila);
+                 obtenerTareaDesdeUsuario(&pila, &numeroDeTarea);
                  break; 
              case VER:
                  mostrarActual(&pila);
@@ -111,7 +115,6 @@ int preguntarCantidadDeTareas() {
     printf( "Cuntas tareas (cima)?\n-");
     scanf("%d", &size);
     return size;
-    getch();
 }
 //==============================================================================
 // FUNCION   : int preguntarAccion()
@@ -145,7 +148,7 @@ int preguntarAccion() {
 //------------------------------------------------------------------------------
 void mostrarMensajeDeOpctionInvalida(){
     printf( "Opcion Invalida\n");
-    getch();
+    esperaTecla();
 }
 //==============================================================================
 // FUNCION   : void obtenerTareaDesdeUsuario(Pila *pila)
@@ -155,21 +158,39 @@ void mostrarMensajeDeOpctionInvalida(){
 //..............................................................................
 // NOTA: El ingreso de datos es mientras queda lugares libres en la pila
 //------------------------------------------------------------------------------
-void obtenerTareaDesdeUsuario(Pila *pila){
+void obtenerTareaDesdeUsuario(Pila *pila, int *numero){
      
-  int numero;
-  char titulo[100];
-  
+   int maxText = 200;
+   char linea[maxText+1];
+   int index = 0;
+   char c;
+     
    if(pilaLlena(pila) == false) {
       
-    printf( "\n\nIngrese tarea\n nr texto\n");
-    scanf("%d %s", &numero, titulo);
+    printf( "\n\nIngrese Descripcion de la tarea:\n");
+    fflush(stdin);
     
-    insertar(pila, numero, titulo);
-      
+    //lectura de linea completa
+    while( (c = getchar()) != '\n' && index <= maxText ) {
+           linea[index] = c;  
+           index++;
+           
+    }
+    linea[index] = 0;
+    
+    if (index == 0) {
+        printf("Tare invalida\n");
+          
+    } else { 
+            
+        *numero = *numero + 1;
+        
+        insertar(pila, *numero, linea);
+    }
+    
   } else {
     printf( "\n\nYa no se pueden cargar mas tareas\n");
-    getch();
+    esperaTecla();
   }
   
 }
@@ -188,14 +209,13 @@ void mostrarActual(Pila *pila) {
   if(pilaVacia(pila) == false) {
     printf( "\n\nTarea Actual:\n");
     tarea = ver(pila); //no la saca
-    printf( "- %d %s\n", tarea->numero, tarea->titulo);
-    getch();
+    printf( "- N%d %s\n", tarea->numero, tarea->titulo);
     
   } else {
     printf( "\n\nSin tareas\n");
-    getch();
   }
   
+    esperaTecla();
 }
 //==============================================================================
 // FUNCION   : void mostrarYDescargar(Pila *pila)
@@ -214,10 +234,14 @@ void mostrarYDescargar(Pila *pila){
     printf( "\n\nDescartando:\n");
     mostrarActual(pila);
     tarea = tomar(pila); //l saca
+    
+    printf( "\n\nTarea descartada\n");
+    
   } else {
       printf( "\n\nSin tareas\n");
   }
-  getch();
+  
+  esperaTecla();
 }
 //==============================================================================
 // FUNCION   : void crear(Pila* pila, int size){
@@ -245,7 +269,7 @@ void crear(Pila* pila, int size){
 void limpiarPila(Pila *pila) {
     pila->actual = 0;
     printf("\n\nPila Limpiada");
-    getch();
+    esperaTecla();
 }
 //==============================================================================
 // FUNCION   : void liberar(Pila *pila) 
@@ -325,4 +349,11 @@ int pilaLlena(Pila *pila) {
      } 
      
      return false;
+}
+
+void esperaTecla() {
+     
+    printf("\n\n\n\nOprima un tecla para continuar.");
+    getch();
+    printf("\n\n\n\n");
 }
